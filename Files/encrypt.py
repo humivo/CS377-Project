@@ -48,7 +48,12 @@ def encrypt(text):
             #Check if char is upper
             elif(character.islower()):
                 encryptData += chr((ord(character) + key - 97) % 26 + 97)
-            #Check if char is upper
+            elif(33 <= ord(character) <= 64):
+                encryptData += chr((ord(character) + key - 33) % 32 + 33)
+            elif(91 <= ord(character) <= 96):
+                encryptData += chr((ord(character) + key - 91) % 6 + 91)
+            elif(123 <= ord(character) <= 126):
+                encryptData += chr((ord(character) + key - 123) % 4 + 123)
             elif(character == " "):
                 print("#To do(Space)")
                 encryptData += chr((ord(character)))
@@ -70,16 +75,22 @@ def encrypt(text):
 
 
 #printchr()
+'''
+def testEncrypt(path):
+    encrypt(path)
+'''
 
 
-
-def main():
-    file = os.listdir(os.getcwd())
+def main(path):
+    file = os.listdir(path)
     if len(file) > 0:
-        for item in os.listdir(os.getcwd()):
+        for item in file:
             if item.endswith('.txt'):
-                encrypt(item)
+                encrypt(path + "/" + item)
+            elif os.path.isdir(path + "/" + item):
+                main(path + "/" + item)
 
 
 if __name__ == "__main__":
-    main()
+    main(os.getcwd())
+    #testEncrypt(os.getcwd() + "/test.txt")

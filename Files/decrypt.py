@@ -10,7 +10,7 @@ import os
 import re
 
 #Function to encrypt data within text file
-def encrypt(text):
+def decrypt(text):
     #How many shifts in the alphabet
     key = 5
     encryptData = ""
@@ -58,20 +58,31 @@ def encrypt(text):
     encryptFile.write(encryptData)
     encryptFile.close()
 
+'''
+def testDecrypt(path):
+    decrypt(path)
+'''
 
 
-
-
-
-def main():
+def main(path):
+    '''
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
             if(name.endswith(".txt")):
-                fileToEncrypt = os.path.join(root, name)
+                fileToDecrypt = os.path.join(root, name)
                 print("File found:", name)
-                encrypt(fileToEncrypt)
+                decrypt(fileToDecrypt)
+    '''
+    file = os.listdir(path)
+    if len(file) > 0:
+        for item in file:
+            if item.endswith('.txt'):
+                decrypt(path + "/" + item)
+            elif os.path.isdir(path + "/" + item):
+                main(path + "/" + item)
 
 
 
 if __name__ == "__main__":
-    main()
+    main(os.getcwd())
+    #testDecrypt(os.getcwd() + "/test.txt")
