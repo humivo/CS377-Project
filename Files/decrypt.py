@@ -3,7 +3,7 @@
 #CS377 Homework
 #
 #To run file in linux "python3 decrypt.py"
-#This program will look for all text file within the current directory and decrypt it
+#This program will look for all text file within the current directory and all sub-directories and decrypt it
 
 import sys
 import os
@@ -51,27 +51,15 @@ def decrypt(text, key):
 
     file.close()
 
-    print("--------------------------")
-
+    #Write the decrypted data into the textfile
     encryptFile = open(text, "w")
     encryptFile.write(encryptData)
     encryptFile.close()
 
-'''
-def testDecrypt(path):
-    decrypt(path)
-'''
-
-
+#main() Function
+#Given a path and a key, look for all text files within the directory and sub-directory
+#and preform decrypt() on the text files
 def main(path, key):
-    '''
-    for root, dirs, files in os.walk(".", topdown=False):
-        for name in files:
-            if(name.endswith(".txt")):
-                fileToDecrypt = os.path.join(root, name)
-                print("File found:", name)
-                decrypt(fileToDecrypt)
-    '''
     file = os.listdir(path)
     if len(file) > 0:
         for item in file:
@@ -84,4 +72,3 @@ def main(path, key):
 
 if __name__ == "__main__":
     main(os.getcwd(), int(sys.argv[1]))
-    #testDecrypt(os.getcwd() + "/test.txt")

