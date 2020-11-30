@@ -68,13 +68,13 @@ def sendKeyToDB():
         'databaseURL': 'https://cs377-project-fall-20.firebaseio.com/'
     })
 
-    victim_id = random.randint(100, 1000)
     key = random.randint(5, 15)
 
     ref = db.reference('cs377-project')
     victims_ref = ref.child('victims')
-    victims_ref.push().set({
-        'victim_id': victim_id,
+    newRef = victims_ref.push()
+    victim_id = newRef.key
+    newRef.set({
         'key': key
     })
 
